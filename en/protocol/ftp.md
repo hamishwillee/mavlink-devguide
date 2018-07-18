@@ -43,7 +43,7 @@ Byte Index | C version | Content | Value | Explanation
 6 | `uint8_t burst_complete` | Burst complete | 0, 1 | Code to indicate if a burst is complete. 1: set of burst packets complete, 0: More burst packets coming.<br>- Only used if `req_opcode` is [BurstReadFile](#BurstReadFile).
 7 | `uint8_t padding` | Padding | | 32 bit alignment padding.
 8 to 11 | `uint32_t offset` | Content offset | | Offsets into data to be sent for [ListDirectory](#ListDirectory) and [ReadFile](#ReadFile) commands.
-12 to (max) 251| `uint8_t data[]` | Data | | Command/response data. Varies by [OpCode](#opcodes). For Reads/Writes this is the buffer transported. For a NAK the first byte is the [error code](#error_codes) and the (optional) second byte may be an error number.
+12 to (max) 251| `uint8_t data[]` | Data | | Command/response data. Varies by [OpCode](#opcodes). This contains the `path` for operations that act on a file or directory. For an ACK for a reads or writes this is the requested information. For a NAK the first byte is the [error code](#error_codes) and the (optional) second byte may be an error number.
 
 
 ## OpCodes/Command {#opcodes}
@@ -58,7 +58,7 @@ Opcode | Name | Description
 1   | TerminateSession | Terminates open Read `session`.<br>- Closes the file associated with (`session`) and frees the session ID for re-use. 
 <span id="ResetSessions"></span>2   | ResetSessions | Terminates *all* open read sessions.<br>- Clears all state held by the server; closes all open files, etc.<br>- Sends an ACK reply with no data. <!-- Note, is same as Terminate, but does not check if file session exists -->
 <span id="ListDirectory"></span>3   | ListDirectory | List files and directories in `<path>` from `<offset>`.<br>- Opens the directory (`path`), seeks to (`offset`) and fills the result buffer with `NULL`-separated filenames (files also include tab-separated file size) and directory names. Sends an ACK packet with the result buffer on success, otherwise a NAK packet with an error code.<br>- The directory is closed after the operation, so this leaves no state on the server.
-<span id="OpenFileRO"></span>4   | OpenFileRO | Opens file at `<path>` for reading, returns `<session>`<br>- Opens the file (`path`) and allocates a *session number*. The file must exist.<br>- Sends an ACK packet with the allocated *session number* on success and the data size of the file to be opened (`size`), otherwise a NAK packet with an error code. Typical error codes for this command are `NoSessionsAvailable`, `FileExists`. <br>- The file remains open after the operation, and must eventually be closed by `Reset` or `Terminate`.
+<span id="OpenFileRO"></span>4   | OpenFileRO | Opens file at `<path>` for reading, returns `<session>`<br>- The `path` is stored in the [payload](#payload) `data`. The drone opens the file (`path`) and allocates a *session number*. The file must exist.<br>- An ACK packet must include the allocated `session` and the data size of the file to be opened (`size`)<br>- A NAK packet must contain [error information](#error_codes) . Typical error codes for this command are `NoSessionsAvailable`, `FileExists`. <br>- The file remains open after the operation, and must eventually be closed by `Reset` or `Terminate`.
 <span id="ReadFile"></span>5   | ReadFile | Reads `<size>` bytes from `<offset>` in `<session>`.<br>- Seeks to (`offset`) in the file opened in (session) and reads (`size`) bytes into the result buffer.<br>- Sends an ACK packet with the result buffer on success, otherwise a NAK packet with an error code. For short reads or reads beyond the end of a file, the (`size`) field in the ACK packet will indicate the actual number of bytes read.<br>- Reads can be issued to any offset in the file for any number of bytes, so reconstructing portions of the file to deal with lost packets should be easy.<br>- For best download performance, try to keep two `Read` packets in flight.
 6   | CreateFile | Creates file at `<path>` for writing, returns `<session>`.<br>- Creates the file (path) and allocates a *session number*. The file must not exist, but all parent directories must exist.<br>- Sends an ACK packet with the allocated session number on success, or a NAK packet with an error code on error (i.e. [FileExists](#FileExists) if the `path` already exists).<br>- The file remains open after the operation, and must eventually be closed by `Reset` or `Terminate`.
 7   | WriteFile | Writes `<size>` bytes to `<offset>` in `<session>`.<br>- Sends an ACK reply with no data on success, otherwise a NAK packet with an error code.
@@ -167,11 +167,60 @@ The GSC should create a timeout after `OpenFileRO` and `ReadFile` commands are s
 A timeout is not set for `TerminateSession` (the server may ignore failure of the command or the ACK).
 
 
-### Writing a File
+### Uploading a File
+
+TBD - CreateFile, kCmdWriteFile, ResetSessions (should probably be terminate)
+
+### Remove File
+
+TBD
+
+
+### Truncate File
+
+TBD
 
 
 
 ### List Directory
+
+The sequence of operations for getting a directory listing is shown below (assuming there are no timeouts and all operations/requests succeed).
+
+{% mermaid %}
+sequenceDiagram;
+    participant GCS
+    participant Drone
+    Note right of GCS: Read directory<br>listing in chunks
+    GCS->>Drone:  ListDirectory(path, offset)
+    Drone-->>GCS: ACK(size, data=part_dir_string)
+{% endmermaid %}
+
+
+
+The sequence of operations is:
+1. GCS sends [ListDirectory](#ListDirectory) command to specifying a directory path and an offset into the returned listing string.
+   - The path is stored in the payload  field `data[0]` and the offset is stored in `offset`
+   - If communicating with the PX4 implementation there is only one session. For this case you must set the `session` to 0 and only send when the system is idle.
+1. The drone generates a directory listing string including NULL-separated directory and file information (file information includes both file name and tab-separated file size). 
+1. Drone responds to the message with either:
+   - ACK containing a fragment of the directory listing string (in the [payload](#payload) `data` field). The size of the data is returned in the `size` field.
+   - NAK with [error information](#error_codes). Generally errors are unrecoverable, but in some case they may indicate that an operation is complete - e.g. EOF error when all the data is downloaded.
+   - The drone must clean up all resources (ie close file handles) associated with the request after sending the NAK.
+1. The operation can be repeated at different offsets to download the whole directory listing.
+
+The GSC should create a timeout after the `ListDirectory` command is sent and resend the message as needed (and [described above](#timeouts)).
+
+### Create Directory
+
+TBD
+
+### Remove Directory
+
+TBD
+
+### Burst Read File
+
+TBD
 
 
 
@@ -194,4 +243,3 @@ Everything is run by the master (QGC in this case); the slave simply responds to
 The MAVLink receiver thread copies an incoming request verbatim from the MAVLink buffer into a request queue, and queues a low-priority work item to handle the packet. This avoids trying to do file I/O on the MAVLink receiver thread, as well as avoiding yet another worker thread. The worker is responsible for directly queuing replies, which are sent with the same sequence number as the request.
 
 The implementation on PX4 only supports a single session.
-
