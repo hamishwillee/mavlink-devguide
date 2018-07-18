@@ -1,32 +1,31 @@
 # File Transfer Protocol (FTP)
 
 The FTP Protocol enables an FTP-like file transfer protocol over MAVLink.
-It supports common FTP operations including: reading, truncating, writing, removing and creating files, listing and removing directories etc.
+It supports common FTP operations like: reading, truncating, writing, removing and creating files, listing and removing directories.
 
 The protocol follows a client-server pattern, where all commands are sent by the GCS (server), 
-and the Drone (client) responds either with the requested information in an ACK or an error in a NAK. 
+and the Drone (client) responds either with an ACK containing the requested information, or a NAK containing an error. 
 The GCS sets a timeout after most commands, and may resend the command if it is triggered.
-(similarly, the drone must re-send its response if a request with the same sequence number is received).
-This ensures that the GCS and drone can never get out of sync in normal operation.
+The drone must re-send its response if a request with the same sequence number is received.
 
-All messages (commands, ACK, NAK) are exchanged inside [FILE_TRANSFER_PROTOCOL](../messages/common.md#FILE_TRANSFER_PROTOCOL) packets.
+All messages (commands, ACK, NAK) are exchanged inside [FILE_TRANSFER_PROTOCOL](../messages/common.md#FILE_TRANSFER_PROTOCOL) messages.
 This message type definition is minimal, with fields for specifying the target network, system and component, and for an "arbitrary" variable-length payload. 
 
 The different commands and other information required to implement the protocol are encoded *within* in the `FILE_TRANSFER_PROTOCOL` payload.
 This topic explains the encoding, packing format, commands and errors, and the order in which the commands are sent to implement the core FTP functionality. 
 
 > **Note** The encoding and content of the payload field are not mandated by the specification - and can be extension specific.
-  The encoding explained here has been used by *QGroundControl* and PX4.
+  This topic covers the encoding that has been used by *QGroundControl* and PX4.
 
-A MAVLink system that supports this protocol should also set the [MAV_PROTOCOL_CAPABILITY_FTP](../messages/common.md#MAV_PROTOCOL_CAPABILITY_FTP) flag in indicate support in the [AUTOPILOT_VERSION.capability](../messages/common.html#AUTOPILOT_VERSION) field.
+A MAVLink system that supports this protocol should also set the [MAV_PROTOCOL_CAPABILITY_FTP](../messages/common.md#MAV_PROTOCOL_CAPABILITY_FTP) flag in the [AUTOPILOT_VERSION.capability](../messages/common.html#AUTOPILOT_VERSION) field.
 
 
 
 ## Payload Format {#payload}
 
 The `FILE_TRANSFER_PROTOCOL` payload is encoded with the information required for the various FTP messages. 
-This includes fields for specifying which message is being sent, the sequence number of the current FTP message (for multi-message data transfers), 
-the size of information in the data part of the message etc..
+This includes fields for holding the command that is being sent, the sequence number of the current FTP message (for multi-message data transfers), 
+the size of information in the data part of the message etc.
 
 > **Tip** Readers will note that the FTP payload format is very similar to the packet format used for serializing MAVLink itself.
 
@@ -83,7 +82,7 @@ Notes:
 
 ## NAK Error Information {#error_codes}
 
-NAK responses contain one of the errors codes listed below in the [payload](#payload) `data[0]` field.
+NAK responses must include one of the errors codes listed below in the [payload](#payload) `data[0]` field.
 If the error code is `FailErrno`, then `data[1]` will additionally contain file-system specific error number (understood by the server). 
 The payload `size` field must be updated with either 1 or 2, depending on whether or not `FailErrno` is specified. 
 
@@ -103,9 +102,6 @@ Error | Name | Description
 <span id="UnknownCommand"></span>8      | UnknownCommand  | Unknown command / opcode
 <span id="FileExists"></span>9          | FileExists      | File already exists
 <span id="FileProtected"></span>10      | FileProtected   | File is write protected
-
-
-
 
 
 
@@ -163,12 +159,12 @@ The sequence of operations is:
 1. Drone responds to each message with either 
    - ACK with the `data` in the [payload](#payload) `data` field (and the size of data returned in the `size` field)
    - NAK with [error information](#error_codes). Generally errors are unrecoverable, but in some case they may indicate that an operation is complete - e.g. EOF error when all the data is downloaded.
-1. Once all the data is downloaded the GCS can send [TerminateSession](#TerminateSession) to close the file. Generally speaking the ACK/NAK can be ignored.
+1. Once all the data is downloaded, the GCS can send [TerminateSession](#TerminateSession) to close the file. 
+   The drone should send an ACK/NAK, but this may (generally speaking) be ignored by the GCS.
 
 
 The GSC should create a timeout after `OpenFileRO` and `ReadFile` commands are sent and resend the messages as needed (and [described above](#timeouts)).
 A timeout is not set for `TerminateSession` (the server may ignore failure of the command or the ACK).
-
 
 
 ### Writing a File
