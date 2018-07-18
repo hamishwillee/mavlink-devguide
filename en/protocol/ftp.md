@@ -10,7 +10,7 @@ The GCS sets a timeout after most commands, and may resend the command if it is 
 This ensures that the GCS and drone can never get out of sync in normal operation.
 
 All messages (commands, ACK, NAK) are exchanged inside [FILE_TRANSFER_PROTOCOL](../messages/common.md#FILE_TRANSFER_PROTOCOL) packets.
-This message type definition is minimal, with fields for specifying the target network, system and component and for a "arbitrary" variable-length payload. 
+This message type definition is minimal, with fields for specifying the target network, system and component, and for an "arbitrary" variable-length payload. 
 
 The different commands and other information required to implement the protocol are encoded *within* in the `FILE_TRANSFER_PROTOCOL` payload.
 This topic explains the encoding, packing format, commands and errors, and the order in which the commands are sent to implement the core FTP functionality. 
@@ -18,20 +18,19 @@ This topic explains the encoding, packing format, commands and errors, and the o
 > **Note** The encoding and content of the payload field are not mandated by the specification - and can be extension specific.
   The encoding explained here has been used by *QGroundControl* and PX4.
 
-A MAVLink system that supports this protocol should also indicate support in the [AUTOPILOT_VERSION.capability](../messages/common.html#AUTOPILOT_VERSION) field, 
-by setting the [MAV_PROTOCOL_CAPABILITY_FTP](../messages/common.md#MAV_PROTOCOL_CAPABILITY_FTP) flag. 
+A MAVLink system that supports this protocol should also set the [MAV_PROTOCOL_CAPABILITY_FTP](../messages/common.md#MAV_PROTOCOL_CAPABILITY_FTP) flag in indicate support in the [AUTOPILOT_VERSION.capability](../messages/common.html#AUTOPILOT_VERSION) field.
 
 
 
-## Payload Header Format {#payload}
+## Payload Format {#payload}
 
-The `FILE_TRANSFER_PROTOCOL` payload encodes a "payload header" that defines the information required for the various FTP messages. 
-This includes fields for specifying which message is being sent, the FTP sequence number of the current FTP message (for multi-message data transfers), 
-the size of information in the data part of the message, and for response messages (ACK/NAK) the original opcode that the message is a response to.
+The `FILE_TRANSFER_PROTOCOL` payload is encoded with the information required for the various FTP messages. 
+This includes fields for specifying which message is being sent, the sequence number of the current FTP message (for multi-message data transfers), 
+the size of information in the data part of the message etc..
 
 > **Tip** Readers will note that the FTP payload format is very similar to the packet format used for serializing MAVLink itself.
 
-Below is the over-the-wire format for the payload part of the [FILE_TRANSFER_PROTOCOL](../messages/common.md#FILE_TRANSFER_PROTOCOL) message on PX4/*QGroundControl* FTP.
+Below is the over-the-wire format for the payload part of the [FILE_TRANSFER_PROTOCOL](../messages/common.md#FILE_TRANSFER_PROTOCOL) message on PX4/*QGroundControl*.
 
 ![FILE_TRANSFER_PROTOCOL Payload format - QGC](../../assets/packets/ftp_transfer_payload_data_qgc.jpg)
 
@@ -39,16 +38,16 @@ Byte Index | C version | Content | Value | Explanation
 --- | --- | --- | --- | ---
 0 to 1 | `uint16_t seq_number` | Sequence number for message | 0&nbsp;-&nbsp;65535 | All *new* messages between the GCS and drone iterate this number. Re-sent commands/ACK/NAK should use the previous response's sequence number.
 2 | `uint8_t session`   | Session id | 0 - 255 | Session id for read/write operations (the server may use this to reference the file handle and information about the progress of read/write operations).
-3 | `uint8_t opcode`    | Command [OpCode](#opcodes) (id) | 0 - 255 | Commands ids and ids for ACK/NAK messages.
-4 | `uint8_t size`      | Size         | 1 - 255 | Depends on [OpCode](#opcodes). For Reads/Writes this is the size of the `data` transported. For an ACK to `OpenFileRO` it is the size of the file that has been opened (and must be read). For NAK it is the number of [error codes)[#error_codes] (1 or 2).
+3 | `uint8_t opcode`    | [OpCode](#opcodes) (id) | 0 - 255 | Ids for particular commands and ACK/NAK messages.
+4 | `uint8_t size`      | Size         | 1 - 255 | Depends on [OpCode](#opcodes). For Reads/Writes this is the size of the `data` transported. For an ACK to `OpenFileRO` it is the size of the file that has been opened (and must be read). For NAK it is the number of bytes used for [error information](#error_codes) (1 or 2).
 5 | `uint8_t req_opcode`| Request [OpCode](#opcodes) | 0 - 255 | OpCode (of original message) returned in an ACK or NAK response. 
-6 | `uint8_t burst_complete` | Burst complete | 0 - 255 | Only used if `req_opcode` is [BurstReadFile](#BurstReadFile). - 1: set of burst packets complete, 0: More burst packets coming.
+6 | `uint8_t burst_complete` | Burst complete | 0, 1 | Code to indicate if a burst is complete. 1: set of burst packets complete, 0: More burst packets coming.<br>- Only used if `req_opcode` is [BurstReadFile](#BurstReadFile).
 7 | `uint8_t padding` | Padding | | 32 bit alignment padding.
 8 to 11 | `uint32_t offset` | Content offset | | Offsets into data to be sent for [ListDirectory](#ListDirectory) and [ReadFile](#ReadFile) commands.
-12 to (max) 251| `uint8_t data[]` | Data | | Command/response data. Varies by [OpCode](#opcodes). For Reads/Writes this is the buffer transported. For a NAK the first byte is the [error codes)[#error_codes] and the (optional) second byte may be an error number.
+12 to (max) 251| `uint8_t data[]` | Data | | Command/response data. Varies by [OpCode](#opcodes). For Reads/Writes this is the buffer transported. For a NAK the first byte is the [error code](#error_codes) and the (optional) second byte may be an error number.
 
 
-## Command OpCodes {#opcodes}
+## OpCodes/Command {#opcodes}
 
 The opcodes defined/implemented in the server are:
 
@@ -88,20 +87,26 @@ NAK responses contain one of the errors codes listed below in the [payload](#pay
 If the error code is `FailErrno`, then `data[1]` will additionally contain file-system specific error number (understood by the server). 
 The payload `size` field must be updated with either 1 or 2, depending on whether or not `FailErrno` is specified. 
 
-<!--  enum ErrorCode : uint8_t : https://github.com/PX4/Firmware/blob/master/src/modules/mavlink/mavlink_ftp.h -->
+> **Note** These are **errors**. Normally if the GCS receives an error it should not attempt to continue the FTP operation, but instead return to an idle state.
 
-Error | Description
---- | ---
-None | No error
-Fail | Unknown failure
-FailErrno | Command failed, Err number sent back in `PayloadHeader.data[1]`. This is a file-system error number understood by the server operating system.
-InvalidDataSize | Payload size is invalid (too big for the available space in message payload).
-InvalidSession | Session is not currently open.
-NoSessionsAvailable | All available sessions in use.
-EOF | Offset past end of file for `ListDirectory` and `ReadFile` commands.
-UnknownCommand | Unknown command opcode
-FileExists | File already exists
-FileProtected | File is write protected <!-- does not appear to be used -->
+<!--  uint8_t enum ErrorCode: https://github.com/PX4/Firmware/blob/master/src/modules/mavlink/mavlink_ftp.h -->
+
+Error | Name | Description
+--- | --- | ---
+<span id="None"></span>1                | None            | No error
+<span id="Fail"></span>2                | Fail            | Unknown failure
+<span id="FailErrno"></span>3           | FailErrno       | Command failed, Err number sent back in `PayloadHeader.data[1]`. This is a file-system error number understood by the server operating system.
+<span id="InvalidDataSize"></span>4     | InvalidDataSize | Payload `size` is invalid
+<span id="InvalidSession"></span>5      | InvalidSessionn | Session is not currently open
+<span id="NoSessionsAvailable"></span>6 | NoSessionsAvailable | All available sessions are already in use.
+<span id="EOF"></span>7                 | EOF             | Offset past end of file for `ListDirectory` and `ReadFile` commands.
+<span id="UnknownCommand"></span>8      | UnknownCommand  | Unknown command / opcode
+<span id="FileExists"></span>9          | FileExists      | File already exists
+<span id="FileProtected"></span>10      | FileProtected   | File is write protected
+
+
+
+
 
 
 ## Timeouts/Resending {#timeouts}
@@ -166,42 +171,11 @@ A timeout is not set for `TerminateSession` (the server may ignore failure of th
 
 
 
-### Write File
+### Writing a File
 
 
 
 ### List Directory
-
-OpCode: 3
-Description: List files and directories in <path> from <offset>.
-
-
-- Opens the directory (path), seeks to (offset) and fills the result buffer with NULL-separated filenames (files also include tab-separated file size) and directory names. Sends an ACK packet with the result buffer on success, otherwise a NAK packet with an error code.
-- The directory is closed after the operation, so this leaves no state on the server.
-
-
-//// ABOVE HERE IS TESTING
-
-
-
-## Error codes {#error_code}
-
-<!--  uint8_t enum ErrorCode: https://github.com/PX4/Firmware/blob/master/src/modules/mavlink/mavlink_ftp.h -->
-
-Error codes returned in NAK response `PayloadHeader.data[0]`
-
-Error | Name | Description
---- | --- | ---
-<span id="None"></span>1                | None            | No error
-<span id="Fail"></span>2                | Fail            | Unknown failure
-<span id="FailErrno"></span>3           | FailErrno       | Fail with an error number (sent back in `PayloadHeader.data[1]`)
-<span id="InvalidDataSize"></span>4     | InvalidDataSize | `PayloadHeader.size` is invalid
-<span id="InvalidSession"></span>5      | InvalidSessionn | Session is not currently open
-<span id="NoSessionsAvailable"></span>6 | NoSessionsAvailable | All available sessions are already in use.
-<span id="EOF"></span>7                 | EOF             | Offset past end of file for `ListDirectory` and `ReadFile` commands.
-<span id="UnknownCommand"></span>8      | UnknownCommand  | Unknown command / opcode
-<span id="FileExists"></span>9          | FileExists      | File exists already
-<span id="FileProtected"></span>10      | FileProtected   | File is write protected
 
 
 
@@ -221,78 +195,7 @@ PX4 Implementation::
 
 Everything is run by the master (QGC in this case); the slave simply responds to packets in order as they arrive. There’s buffering in the server for a little overlap (two packets in the queue at a time). This is a tradeoff between memory and link latency which may need to be reconsidered at some point.
 
-The MAVLink receiver thread copies an incoming request verbatim from the MAVLink buffer into a request queue, and queues a low-priority work item to handle the packet. This avoids trying to do file I/O on the MAVLink receiver thread, as well as avoiding yet another worker thread. The worker is responsible for directly queueing replies, which are sent with the same sequence number as the request.
+The MAVLink receiver thread copies an incoming request verbatim from the MAVLink buffer into a request queue, and queues a low-priority work item to handle the packet. This avoids trying to do file I/O on the MAVLink receiver thread, as well as avoiding yet another worker thread. The worker is responsible for directly queuing replies, which are sent with the same sequence number as the request.
 
 The implementation on PX4 only supports a single session.
-
-
-
-///// XXX HOW
-
-Implementation notes
-PX4 - Is a client. Always handles requests for opcodes from GCS. Then returns ack or nack. Protocol does not require client to request anything.
-
-MESSAGE RECEIVED
-MavlinkFTP::handle_message 
-- receive message in server
-- check if is MAVLINK_MSG_ID_FILE_TRANSFER_PROTOCOL
-- if so, decode to a mavlink_file_transfer_protocol_t ftp_request
-- check if ftp_request.target_system in request matches this server
-- if so, pass request and sysid of source to _process_request()
-
-/// @brief Processes an FTP message
-void MavlinkFTP::_process_request(message, source sysid)
-- set stream_send false
-- set error code to none
-- check buffers for holding message exist [_ensure_buffers_exist()]
-- check payload  size is within max lenght
-- cast message payload into our Payload Header
-- Resend last reply (cached) if this is a resend request (ie if ACK/NAK was lost)
-  - This checks payload sequence number of this message is one more than last message
-  
-- CASE switch to workout opcode we are handling.
-  - All opcodes are handled in separate functions that take payload and return a code. 
-  - e.g. errorCode = _workRename(payload);
-  - The payload is updated correctly for the message to be returned (ACK)
-
-- We then iterate the sequence number [SEQUENCE number iterated at both ends every time a NEW message is sent]. Ie If request is seq_number then response will be sent with seq_number+1, and next request will be seq_number+2 ....
-- If no error (ACK) then 
-  - set payload respond opcode to ACK
-  - set payload req_opcode to the opcode from message we are responding to. 
-  - Message already has whatever data from the "_workXX" function.
-- If error (NAK) then 
-  - set payload respond opcode to ACK
-  - set payload req_opcode to the opcode from message we are responding to. [NOTE, duplicated work, should just do this once near payload->seq_number++;.]
-  - set payload size to 1 (for error code)
-  - Set error code based on error number (in this case, just exists) and write error code into zero'th data position.
-  - If error has error number then add that to second byte, and set data size of data to 2.
-  
-- set _last_reply_valid=false (reset, as we are about to send a new message)
-
-- IF this is not being streamed (or if it is but there is an error) then 
-- set the target system id based on the stored session
-- send the message reply using _reply()
-
-void MavlinkFTP::_reply(mavlink_file_transfer_protocol_t *ftp_req)
-- Take a copy of the last (N)ACK so it can be resent (only for small messages.) 
-- Set arget network and component to zero (Not used)
-- Send the message.
-
-LOTS OF STUFF FOR HANDLING MESSAGE TYPES.
-
-
-QGC has state engine:     enum OperationState
-        {
-            kCOIdle,		// not doing anything
-            kCOAck,			// waiting for an Ack
-            kCOList,		// waiting for List response
-            kCOOpenRead,    // waiting for Open response followed by Read download
-			kCOOpenBurst,   // waiting for Open response, followed by Burst download
-            kCORead,		// waiting for Read response
-			kCOBurst,		// waiting for Burst response
-            kCOWrite,       // waiting for Write response
-            kCOCreate,      // waiting for Create response
-            kCOCreateDir,   // waiting for Create Directory response
-  
-
 
