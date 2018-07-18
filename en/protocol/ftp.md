@@ -115,16 +115,16 @@ sequenceDiagram;
     participant Drone
     GCS->>Drone:  OpenFileRO(path)
     GCS->>GCS: Start timeout
-    Drone -->> GCS: ACK(session, size=filesize)
+    Drone-->>GCS: ACK(session, size=filesize)
     Note right of GCS: Read data in chunks
 
     GCS->>Drone:  ReadFile(session, size, offset)
     GCS->>GCS: Start timeout
-    Drone -->> GCS: ACK(session, size=data_size, data=buffer)
+    Drone-->>GCS: ACK(session, size=data_size, data=buffer)
     Note right of GCS: When all chunks read...
     GCS->>Drone:  TerminateSession(session)
     GCS->>GCS: Start timeout
-    Drone -->> GCS: ACK()
+    Drone-->>GCS: ACK()
     Note right of Drone: When all chunks read... blah blah
     Note right of GCS: When all chunks read... blah blah
 {% endmermaid %}
