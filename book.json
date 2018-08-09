@@ -74,6 +74,12 @@
                 }
             ]
         },
-        "favicon": "favicon.ico"
+        "favicon": "favicon.ico",
+        
+        "html-minifier": {
+          "removeEmptyElements": false
+        }
+        
+        
     }
 }
