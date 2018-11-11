@@ -22,138 +22,6 @@ td {
    <a href="common.md">common.xml</a>
   </p>
   <h2>MAVLink Type Enumerations</h2>
-  <h3 id="MAV_CMD">
-   <a href="#MAV_CMD">MAV_CMD</a>
-  </h3>
-  <p>
-  </p>
-  <table class="sortable">
-   <thead>
-    <tr>
-     <th>Value</th>
-     <th>Field Name</th>
-     <th>Description</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr id="MAV_CMD_RESET_MPPT">
-     <td>40001</td>
-     <td>
-      <a href="#MAV_CMD_RESET_MPPT">MAV_CMD_RESET_MPPT</a>
-     </td>
-     <td>Mission command to reset Maximum Power Point Tracker (MPPT)</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #1</td>
-     <td>MPPT number</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #2</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #3</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #4</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #5</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #6</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #7</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td colspan="3">
-      <br/>
-     </td>
-    </tr>
-    <tr id="MAV_CMD_PAYLOAD_CONTROL">
-     <td>40002</td>
-     <td>
-      <a href="#MAV_CMD_PAYLOAD_CONTROL">MAV_CMD_PAYLOAD_CONTROL</a>
-     </td>
-     <td>Mission command to perform a power cycle on payload</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #1</td>
-     <td>Complete power cycle</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #2</td>
-     <td>VISensor power cycle</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #3</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #4</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #5</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #6</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #7</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td colspan="3">
-      <br/>
-     </td>
-    </tr>
-   </tbody>
-  </table>
   <h3 id="GSM_LINK_TYPE">
    <a href="#GSM_LINK_TYPE">GSM_LINK_TYPE</a>
   </h3>
@@ -233,6 +101,93 @@ td {
       <a href="#GSM_MODEM_TYPE_HUAWEI_E3372">GSM_MODEM_TYPE_HUAWEI_E3372</a>
      </td>
      <td>HUAWEI LTE USB Stick E3372</td>
+    </tr>
+   </tbody>
+  </table>
+  <h2>MAVLink Commands (MAV_CMD)</h2>
+  <p>
+  </p>
+  <h3 id="MAV_CMD_RESET_MPPT">MAV_CMD_RESET_MPPT (<a href="#MAV_CMD_RESET_MPPT">40001</a>
+   )
+  </h3>
+  <p>Mission command to reset Maximum Power Point Tracker (MPPT)</p>
+  <table class="sortable">
+   <thead>
+    <tr>
+     <th>Param</th>
+     <th>Description</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td>1</td>
+     <td>MPPT number</td>
+    </tr>
+    <tr>
+     <td>2</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>3</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>4</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>5</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>6</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>7</td>
+     <td>Empty</td>
+    </tr>
+   </tbody>
+  </table>
+  <h3 id="MAV_CMD_PAYLOAD_CONTROL">MAV_CMD_PAYLOAD_CONTROL (<a href="#MAV_CMD_PAYLOAD_CONTROL">40002</a>
+   )
+  </h3>
+  <p>Mission command to perform a power cycle on payload</p>
+  <table class="sortable">
+   <thead>
+    <tr>
+     <th>Param</th>
+     <th>Description</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td>1</td>
+     <td>Complete power cycle</td>
+    </tr>
+    <tr>
+     <td>2</td>
+     <td>VISensor power cycle</td>
+    </tr>
+    <tr>
+     <td>3</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>4</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>5</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>6</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>7</td>
+     <td>Empty</td>
     </tr>
    </tbody>
   </table>

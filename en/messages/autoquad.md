@@ -205,196 +205,6 @@ td {
     </tr>
    </tbody>
   </table>
-  <h3 id="MAV_CMD">
-   <a href="#MAV_CMD">MAV_CMD</a>
-  </h3>
-  <p>
-  </p>
-  <table class="sortable">
-   <thead>
-    <tr>
-     <th>Value</th>
-     <th>Field Name</th>
-     <th>Description</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr id="MAV_CMD_AQ_NAV_LEG_ORBIT">
-     <td>1</td>
-     <td>
-      <a href="#MAV_CMD_AQ_NAV_LEG_ORBIT">MAV_CMD_AQ_NAV_LEG_ORBIT</a>
-     </td>
-     <td>Orbit a waypoint.</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #1</td>
-     <td>Orbit radius in meters</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #2</td>
-     <td>Loiter time in decimal seconds</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #3</td>
-     <td>Maximum horizontal speed in m/s</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #4</td>
-     <td>Desired yaw angle at waypoint</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #5</td>
-     <td>Latitude</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #6</td>
-     <td>Longitude</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #7</td>
-     <td>Altitude</td>
-    </tr>
-    <tr>
-     <td colspan="3">
-      <br/>
-     </td>
-    </tr>
-    <tr id="MAV_CMD_AQ_TELEMETRY">
-     <td>2</td>
-     <td>
-      <a href="#MAV_CMD_AQ_TELEMETRY">MAV_CMD_AQ_TELEMETRY</a>
-     </td>
-     <td>Start/stop AutoQuad telemetry values stream.</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #1</td>
-     <td>Start or stop (1 or 0)</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #2</td>
-     <td>Stream frequency in us</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #3</td>
-     <td>Dataset ID (refer to aq_mavlink.h::mavlinkCustomDataSets enum in AQ flight controller code)</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #4</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #5</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #6</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #7</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td colspan="3">
-      <br/>
-     </td>
-    </tr>
-    <tr id="MAV_CMD_AQ_REQUEST_VERSION">
-     <td>4</td>
-     <td>
-      <a href="#MAV_CMD_AQ_REQUEST_VERSION">MAV_CMD_AQ_REQUEST_VERSION</a>
-     </td>
-     <td>Request AutoQuad firmware version number.</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #1</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #2</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #3</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #4</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #5</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #6</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td>
-     </td>
-     <td>Mission Param #7</td>
-     <td>Empty</td>
-    </tr>
-    <tr>
-     <td colspan="3">
-      <br/>
-     </td>
-    </tr>
-   </tbody>
-  </table>
   <h3 id="MAV_DATA_STREAM">
    <a href="#MAV_DATA_STREAM">MAV_DATA_STREAM</a>
   </h3>
@@ -416,6 +226,135 @@ td {
       <a href="#MAV_DATA_STREAM_PROPULSION">MAV_DATA_STREAM_PROPULSION</a>
      </td>
      <td>Motor/ESC telemetry data.</td>
+    </tr>
+   </tbody>
+  </table>
+  <h2>MAVLink Commands (MAV_CMD)</h2>
+  <p>
+  </p>
+  <h3 id="MAV_CMD_AQ_NAV_LEG_ORBIT">MAV_CMD_AQ_NAV_LEG_ORBIT (<a href="#MAV_CMD_AQ_NAV_LEG_ORBIT">1</a>
+   )
+  </h3>
+  <p>Orbit a waypoint.</p>
+  <table class="sortable">
+   <thead>
+    <tr>
+     <th>Param</th>
+     <th>Description</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td>1</td>
+     <td>Orbit radius in meters</td>
+    </tr>
+    <tr>
+     <td>2</td>
+     <td>Loiter time in decimal seconds</td>
+    </tr>
+    <tr>
+     <td>3</td>
+     <td>Maximum horizontal speed in m/s</td>
+    </tr>
+    <tr>
+     <td>4</td>
+     <td>Desired yaw angle at waypoint</td>
+    </tr>
+    <tr>
+     <td>5</td>
+     <td>Latitude</td>
+    </tr>
+    <tr>
+     <td>6</td>
+     <td>Longitude</td>
+    </tr>
+    <tr>
+     <td>7</td>
+     <td>Altitude</td>
+    </tr>
+   </tbody>
+  </table>
+  <h3 id="MAV_CMD_AQ_TELEMETRY">MAV_CMD_AQ_TELEMETRY (<a href="#MAV_CMD_AQ_TELEMETRY">2</a>
+   )
+  </h3>
+  <p>Start/stop AutoQuad telemetry values stream.</p>
+  <table class="sortable">
+   <thead>
+    <tr>
+     <th>Param</th>
+     <th>Description</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td>1</td>
+     <td>Start or stop (1 or 0)</td>
+    </tr>
+    <tr>
+     <td>2</td>
+     <td>Stream frequency in us</td>
+    </tr>
+    <tr>
+     <td>3</td>
+     <td>Dataset ID (refer to aq_mavlink.h::mavlinkCustomDataSets enum in AQ flight controller code)</td>
+    </tr>
+    <tr>
+     <td>4</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>5</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>6</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>7</td>
+     <td>Empty</td>
+    </tr>
+   </tbody>
+  </table>
+  <h3 id="MAV_CMD_AQ_REQUEST_VERSION">MAV_CMD_AQ_REQUEST_VERSION (<a href="#MAV_CMD_AQ_REQUEST_VERSION">4</a>
+   )
+  </h3>
+  <p>Request AutoQuad firmware version number.</p>
+  <table class="sortable">
+   <thead>
+    <tr>
+     <th>Param</th>
+     <th>Description</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td>1</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>2</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>3</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>4</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>5</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>6</td>
+     <td>Empty</td>
+    </tr>
+    <tr>
+     <td>7</td>
+     <td>Empty</td>
     </tr>
    </tbody>
   </table>

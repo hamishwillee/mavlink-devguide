@@ -475,6 +475,7 @@ td {
     </tr>
    </tbody>
   </table>
+  <h2>MAVLink Commands (MAV_CMD)</h2>
   <h2>MAVLink Messages</h2>
   <h3 id="HEARTBEAT">HEARTBEAT (<a href="#HEARTBEAT">
     #0

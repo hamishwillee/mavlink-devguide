@@ -122,6 +122,7 @@ td {
     </tr>
    </tbody>
   </table>
+  <h2>MAVLink Commands (MAV_CMD)</h2>
   <h2>MAVLink Messages</h2>
   <h3 id="ICAROUS_HEARTBEAT">ICAROUS_HEARTBEAT (<a href="#ICAROUS_HEARTBEAT">
     #42000

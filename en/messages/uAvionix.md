@@ -554,6 +554,7 @@ td {
     </tr>
    </tbody>
   </table>
+  <h2>MAVLink Commands (MAV_CMD)</h2>
   <h2>MAVLink Messages</h2>
   <h3 id="UAVIONIX_ADSB_OUT_CFG">UAVIONIX_ADSB_OUT_CFG (<a href="#UAVIONIX_ADSB_OUT_CFG">
     #10001
