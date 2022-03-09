@@ -143,13 +143,22 @@ GCS recommended settings:
 
 ## FTP Operations
 
-### Reading a File (`ReadFile`)
+### Reading a File
+
+MAVLink FTP supports two methods for file reading:
+- [ReadFile](#reading-a-file-readfile) requests a message-sized chunk of data at an offset, which is then sent in an ACK response.
+  The `ReadFile`/`ACK` sequence is then repeated at offsets across the file until the whole file is read.
+- [BurstReadFile](#reading-a-file-burstreadfile) requests a "burst" of data at an offset, which is then streamed in a sequence of `BurstReadFile` responses.
+  Bursts are requested at offsets until the while file has been read.
+  Any missing/dropped data may be re-requested using a `ReadFile` or `BurstReadFile`.
+
+Burst reading is generally much more efficient (in particular when packet loss is low), as fewer messages are sent and less time is spent waiting for responses.
+
+#### Reading a File (`ReadFile`)
 
 After opening a file session, [ReadFile](#ReadFile) is called to request a message sized chunk of the file, which is then returned to the client in an `ACK` message.
 The process is repeated at different offsets until the whole file has been retrieved.
 The file session is then closed.
-
-> **Note** [Burst reading a file](#reading-a-file-burstreadfile) is a (generally) faster alternative to this approach.
 
 The sequence of operations for downloading (reading) a file using [ReadFile] is shown below.
 This assumes that there are no timeouts and all operations/requests succeed.
@@ -195,38 +204,39 @@ The GSC should create a timeout after `OpenFileRO` and `ReadFile` commands are s
 A timeout is not set for `TerminateSession` (the server may ignore failure of the command or the ACK).
 
 
-### Reading a File (`BurstReadFile`)
+#### Reading a File (`BurstReadFile`)
 
 After opening a file for reading, it is read in "bursts".
 Each burst delivers a part of the file as a stream of messages.
 The last message in the burst is indicated by setting `burst_complete=1` (without any ACKs).
 
 The client tracks the recieved chunks.
-On completion of the burst (or the file), if there are any missing parts of the file it can request them using either another burst or using [ReadFile](#reading-a-file-readfile).
-
-> **Note** Burst read is a (generally) faster alternative to using [ReadFile](#ReadFile) to [read a file](#reading-a-file-readfile).
-> This is because fewer messages are sent and need to be waited on.
+On completion of the burst (or the file), if there are any missing parts of the file it can request them using either bursts or using [ReadFile](#reading-a-file-readfile).
 
 The sequence of operations for a burst read is shown below (assuming there are no timeouts and all operations/requests succeed).
 
-[![Mermaid Sequence: Burst read directory](https://mermaid.ink/img/pako:eNqtVE2P0zAQ_Ssjn1Ipu-pKnAKtBIW9ILFSy42iyE0mjYVjB3tCtaz2vzOOk34stKxYemgSz7x58549fhCFLVFkwuP3Dk2B75XcOtm8XhvgXysdqUK10hAstEJDv6-v0P1AF9c_WUKw_DlkpzGYwV2LBiqlEZLKOth0zhM4lKUy28kR1qltTWCrAZ_BMvTFuXYsEJNj-Go-Hwl6hluOL-8SKCXJL9Ovs1ZSnYJXP3Gm0SThcwIDXQRecYmR6u3iYwIevVfWDKhXaV-rRwfyPfqs0CVrAqoxilUmSvWQOGxREow-wwa13QGvGNyx4Moj-Wc5cfCu34aQsudLmJBq5aGQHkPxWHg2nZyz7V2oFpoO3h3JH4FH9gUncmXyvoF_9_GkDJw6qrHqBY3txSd4YrmN72sET4u6M9980KdMwSHPp2j0EHaK6mhSXtim1Ug4m57r9VT-vumn8D_6semqCt0k3R-3YeF_cb0pOucYmfM30vwFzNfX1xdMvuWB1JL3ouGW5PZwankT6Wl7Ny9Td3NQF58sLg_k-ZAYdvb5Ui-PoTT30Cjfn44wKh66_v2kVUj2Iyk3XGoCbMcY_AvLQlses0Er7GoMf1YPw1hYrbEgLM_N3md0jTKScBUrjK5dnCwOilQ0DJWq5Iv7ISSvBV8BDa5Fxq8lVrLTtBZr88ipXcvW4YdSkXUiq6T2mArZkV3dm0Jk5Dock4bLf8h6_AUnGRvv)](https://mermaid-js.github.io/mermaid-live-editor/edit/#pako:eNqtVE2P0zAQ_Ssjn1Ipu-pKnAKtBIW9ILFSy42iyE0mjYVjB3tCtaz2vzOOk34stKxYemgSz7x58549fhCFLVFkwuP3Dk2B75XcOtm8XhvgXysdqUK10hAstEJDv6-v0P1AF9c_WUKw_DlkpzGYwV2LBiqlEZLKOth0zhM4lKUy28kR1qltTWCrAZ_BMvTFuXYsEJNj-Go-Hwl6hluOL-8SKCXJL9Ovs1ZSnYJXP3Gm0SThcwIDXQRecYmR6u3iYwIevVfWDKhXaV-rRwfyPfqs0CVrAqoxilUmSvWQOGxREow-wwa13QGvGNyx4Moj-Wc5cfCu34aQsudLmJBq5aGQHkPxWHg2nZyz7V2oFpoO3h3JH4FH9gUncmXyvoF_9_GkDJw6qrHqBY3txSd4YrmN72sET4u6M9980KdMwSHPp2j0EHaK6mhSXtim1Ug4m57r9VT-vumn8D_6semqCt0k3R-3YeF_cb0pOucYmfM30vwFzNfX1xdMvuWB1JL3ouGW5PZwankT6Wl7Ny9Td3NQF58sLg_k-ZAYdvb5Ui-PoTT30Cjfn44wKh66_v2kVUj2Iyk3XGoCbMcY_AvLQlses0Er7GoMf1YPw1hYrbEgLM_N3md0jTKScBUrjK5dnCwOilQ0DJWq5Iv7ISSvBV8BDa5Fxq8lVrLTtBZr88ipXcvW4YdSkXUiq6T2mArZkV3dm0Jk5Dock4bLf8h6_AUnGRvv)
+[![Mermaid Sequence: Burst read file](https://mermaid.ink/img/pako:eNqtVE2PmzAQ_SsjTkRio6zUE20ibdPupVJXSnprKuTAEKwam9pDo-1q_3vHGEiybdJIWw6APR9v3vOMn6LcFBilkcMfLeocP0ixs6J-u9HATyMsyVw2QhMslURNf-6v0f5EG_Y_G0IwvOy9k2BM4aFBDaVUCHFpLGxb6wgsikLq3eQo1spdRWDKPj6Fla-Lfc2QIDgH881iMQB0CPdsXz3EUAgSX2ff5o2gKgEnf-FcoY79cgI9XAi84RQD1N3yUwwOnZNG91Fvki5XF-3Bx-izRFfMCajCQFbqQNVBbLFBQTDoDFtUZg-8o3HPhEuH5K5S4qBddwzeZcSLGZAq6SAXDn3ykHg-m5yT7b3P5ov22h3RHwKP5PNKZFJnXQFX6niil8KyK3cAD19wxGRq1yntFcurVn93vnqpczY57pFBIdhLqoIEWW7qRiHhfHauklNyI7eX4X9lu23LEu0kGZup3_hfWO_y1lqOzHiNtHgF8nQ6vSDyPY-bEtwxNZckdoee5COil-Xdvo7d7YFd-DK5zINnvaM_2eupXh4yoR-hlq7rDj8IDtru_6RUiMeBE1tONQGWYzD-A2WpDA_R0Mj7Cv3LqH7UcqMU5oTFucn6graWWhCuQ4ZBtYtzw8YoiWoOFbLga_nJO28iHvAaN1HKvwWWolW0iTb6mV3bhqXDj4UkY6O0FMphEomWzPpR51FKtsXBqb_ae6_n3_cuEEU)](https://mermaid-js.github.io/mermaid-live-editor/edit/#pako:eNqtVE2PmzAQ_SsjTkRio6zUE20ibdPupVJXSnprKuTAEKwam9pDo-1q_3vHGEiybdJIWw6APR9v3vOMn6LcFBilkcMfLeocP0ixs6J-u9HATyMsyVw2QhMslURNf-6v0f5EG_Y_G0IwvOy9k2BM4aFBDaVUCHFpLGxb6wgsikLq3eQo1spdRWDKPj6Fla-Lfc2QIDgH881iMQB0CPdsXz3EUAgSX2ff5o2gKgEnf-FcoY79cgI9XAi84RQD1N3yUwwOnZNG91Fvki5XF-3Bx-izRFfMCajCQFbqQNVBbLFBQTDoDFtUZg-8o3HPhEuH5K5S4qBddwzeZcSLGZAq6SAXDn3ykHg-m5yT7b3P5ov22h3RHwKP5PNKZFJnXQFX6niil8KyK3cAD19wxGRq1yntFcurVn93vnqpczY57pFBIdhLqoIEWW7qRiHhfHauklNyI7eX4X9lu23LEu0kGZup3_hfWO_y1lqOzHiNtHgF8nQ6vSDyPY-bEtwxNZckdoee5COil-Xdvo7d7YFd-DK5zINnvaM_2eupXh4yoR-hlq7rDj8IDtru_6RUiMeBE1tONQGWYzD-A2WpDA_R0Mj7Cv3LqH7UcqMU5oTFucn6graWWhCuQ4ZBtYtzw8YoiWoOFbLga_nJO28iHvAaN1HKvwWWolW0iTb6mV3bhqXDj4UkY6O0FMphEomWzPpR51FKtsXBqb_ae6_n3_cuEEU)
 
 <!-- Original Diagram
 sequenceDiagram;
     participant Client
     participant Server
-    Note right of Client: Open file for burst reading
-    Client->>Server:  BurstReadFile( data[0]=path, size=len(path) )
+    Note over Client,Server: Open file (for burst reading)
+    Note right of Client: Request open file
+    Client- >>Server:  OpenFileRO( data[0]=path, size=len(path) )
     Server-- >>Client: ACK( session, size=4, data=len(file) )
-    Note left of Server: Server streams data in chunks with burst_complete=0
-    Server-- >>Client: BurstReadFile(session,burst_complete=0, offset=0, size=len(buffer), data[0]=buffer)
-    Server-- >>Client: BurstReadFile(session,burst_complete=0, offset=n, size=len(buffer), data[0]=buffer)
-    Note left of Server: When complete, send last chunk with burst_complete=1
-    Server-- >>Client: BurstReadFile(session,burst_complete=1, offset=last_chunk, size=len(buffer), data[0]=buffer)
-    Note right of Client: Read any missing chunks using ReadFile at offset
-    Client- >>Server:  ReadFile(session, size, offset)
-    Server-- >>Client: ACK(session, size=len(buffer), data[0]=buffer)
-    Note right of Client: Close session when whole data file collected
+    Note over Client,Server: Read the file in bursts (repeat sequence below at new offsets)
+    Note right of Client: Request burst read part of the file (in this case at offset=0)
+    Client- >>Server:  BurstReadFile( session, offset=0, size=len(data_in_burst) )
+    Server-- >>Client: ACK( session )
+    Note left of Server: Server streams data in chunks at increasing offsets with burst_complete=0
+    Server-- >>Client: BurstReadFile(session, burst_complete=0, offset=0, size=len(buffer), data[0]=buffer)
+    Server-- >>Client: BurstReadFile(session, burst_complete=0, offset=<current_offet>, size=len(buffer), data[0]=buffer)
+    Server-- >>Client: ...
+    Note left of Server: For last message in burst set burst_complete=1
+    Server-- >>Client: BurstReadFile(session, burst_complete=1, offset=<offset_of_last_burst_chunk>, size=len(buffer), data[0]=buffer)
+    Note over Client,Server: Read any missing parts using BurstReadFile (sequence above) or ReadFile
+    Note over Client,Server: Close session when whole file collected
     Client- >>Server:  TerminateSession(session)
     Server-- >>Client: ACK()
 -->
@@ -238,11 +248,12 @@ The sequence of operations is:
    - ACK on success. The [payload](#payload) must specify fields: `session` = file session id, `size` = 4, `data` = length of file that has been opened.
    - NAK with [error information](#error_codes), e.g. `NoSessionsAvailable`, `FileExists`. 
      The GCS may cancel the operation, depending on the error.
-1. Client (i.e. GCS) sends [BurstReadFile](#BurstReadFile) command specifying the part of the file that it wants to get.
+1. Client (i.e. GCS) sends [BurstReadFile](#BurstReadFile) command specifying the part of the file that it wants to get in the burst.
    - The payload must specify: `session`: the current session id, `offset` = offset in file of start of burst, `data`= length of burst, `size`=4.
 1. Server (drone) responds with either 
-   - ACK on success. The [payload](#payload) must specify fields: `session` = file session id, `size` = 4, `data` = lenght of file in burst. 
-   - NAK with [error information](#error_codes). The client may cancel the operation, depending on the error.
+   - ACK on success. The [payload](#payload) must specify fields: `session` = file session id.
+   - NAK if there is an error ([`InvalidSession`](#InvalidSession) or some other [error code](#error_codes)).
+     The client may cancel the operation, depending on the error.
 1. Server sends stream of [BurstReadFile](#BurstReadFile) data to client (without ACK) until the whole burst is sent, or a server-defined burst size limit is reached.
    - The payload must specify: `session`=current session, `size`=size of data to read, `offset`= position in original data of current chunk.
    - The payload must specify `burst_complete=0` for all chunks, except the last one, which must set `burst_complete=1`.
