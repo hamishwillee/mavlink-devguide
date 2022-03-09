@@ -163,23 +163,23 @@ The file session is then closed.
 The sequence of operations for downloading (reading) a file using [ReadFile] is shown below.
 This assumes that there are no timeouts and all operations/requests succeed.
 
-[![Mermaid Sequence: Reading a File](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgTm90ZSByaWdodCBvZiBHQ1M6IE9wZW4gZmlsZVxuICAgIEdDUy0-PkRyb25lOiAgT3BlbkZpbGVSTyggZGF0YVswXT1wYXRoLCBzaXplPWxlbihwYXRoKSApXG4gICAgRHJvbmUtLT4-R0NTOiBBQ0soIHNlc3Npb24sIHNpemU9NCwgZGF0YT1sZW4oZmlsZSkgKVxuICAgIE5vdGUgcmlnaHQgb2YgR0NTOiBSZWFkIGZpbGUgaW4gY2h1bmtzPGJyPihjYWxsIGF0IG9mZnNldClcbiAgICBHQ1MtPj5Ecm9uZTogIFJlYWRGaWxlKHNlc3Npb24sIHNpemUsIG9mZnNldClcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSyhzZXNzaW9uLCBzaXplPWxlbihidWZmZXIpLCBkYXRhWzBdPWJ1ZmZlcilcbiAgICBOb3RlIHJpZ2h0IG9mIEdDUzogQ29udGludWUgdW50aWwgTkFLPGJyPiB3aXRoIEVPRlxuICAgIERyb25lLS0-PkdDUzogTkFLKHNlc3Npb24sIHNpemU9MSwgZGF0YT1FT0YpXG4gICAgTm90ZSByaWdodCBvZiBHQ1M6IENsb3NlIHNlc3Npb25cbiAgICBHQ1MtPj5Ecm9uZTogIFRlcm1pbmF0ZVNlc3Npb24oc2Vzc2lvbilcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSygpIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgTm90ZSByaWdodCBvZiBHQ1M6IE9wZW4gZmlsZVxuICAgIEdDUy0-PkRyb25lOiAgT3BlbkZpbGVSTyggZGF0YVswXT1wYXRoLCBzaXplPWxlbihwYXRoKSApXG4gICAgRHJvbmUtLT4-R0NTOiBBQ0soIHNlc3Npb24sIHNpemU9NCwgZGF0YT1sZW4oZmlsZSkgKVxuICAgIE5vdGUgcmlnaHQgb2YgR0NTOiBSZWFkIGZpbGUgaW4gY2h1bmtzPGJyPihjYWxsIGF0IG9mZnNldClcbiAgICBHQ1MtPj5Ecm9uZTogIFJlYWRGaWxlKHNlc3Npb24sIHNpemUsIG9mZnNldClcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSyhzZXNzaW9uLCBzaXplPWxlbihidWZmZXIpLCBkYXRhWzBdPWJ1ZmZlcilcbiAgICBOb3RlIHJpZ2h0IG9mIEdDUzogQ29udGludWUgdW50aWwgTkFLPGJyPiB3aXRoIEVPRlxuICAgIERyb25lLS0-PkdDUzogTkFLKHNlc3Npb24sIHNpemU9MSwgZGF0YT1FT0YpXG4gICAgTm90ZSByaWdodCBvZiBHQ1M6IENsb3NlIHNlc3Npb25cbiAgICBHQ1MtPj5Ecm9uZTogIFRlcm1pbmF0ZVNlc3Npb24oc2Vzc2lvbilcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSygpIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
+[![Mermaid Sequence: Reading a File - ReadFile](https://mermaid.ink/img/pako:eNp9kl9rwjAUxb_KJU8tVNhgT90UxOmLoKB7W_cQ21sbliZdcrOxid99Sf8Ibmpf0tycc-8vhxxYrgtkKbP44VDl-Cz43vD6MVPgv4YbErlouCKYSYGK_te3aD7RdPWVJgQj9hWBLntHCusGFZRCYifqyqPJpHOm0AoW_nyzjqDgxF_v3sYNpyoBK35wLFFFYRtD3HXojCPfYhgxnS0jsGit0Kp3PSRtr9Ydhp_clyE3yIsWEoSCvHLq3T7tzCTKuZTAg7S0SPG1KwR7uEJ0BpGc2y5zn2MH3J0rSzRxcgqjL9zin2lFQjkE51cJq-ky4MOXoArm68U1AK_7A3Df5-ZNtwdKbXHI_FosL2hqoTjhttMNs24GErOE1d7IReFf5iFIM0YV1pix1P8WWHInKWOZOnqpazwvzgtB2rC05NJiwrgjvf1WOUvJOBxE_evuVcdf9bz_ZQ)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNp9kl9rwjAUxb_KJU8tVNhgT90UxOmLoKB7W_cQ21sbliZdcrOxid99Sf8Ibmpf0tycc-8vhxxYrgtkKbP44VDl-Cz43vD6MVPgv4YbErlouCKYSYGK_te3aD7RdPWVJgQj9hWBLntHCusGFZRCYifqyqPJpHOm0AoW_nyzjqDgxF_v3sYNpyoBK35wLFFFYRtD3HXojCPfYhgxnS0jsGit0Kp3PSRtr9Ydhp_clyE3yIsWEoSCvHLq3T7tzCTKuZTAg7S0SPG1KwR7uEJ0BpGc2y5zn2MH3J0rSzRxcgqjL9zin2lFQjkE51cJq-ky4MOXoArm68U1AK_7A3Df5-ZNtwdKbXHI_FosL2hqoTjhttMNs24GErOE1d7IReFf5iFIM0YV1pix1P8WWHInKWOZOnqpazwvzgtB2rC05NJiwrgjvf1WOUvJOBxE_evuVcdf9bz_ZQ)
 
 <!-- Original diagram
 sequenceDiagram;
-    participant GCS
-    participant Drone
-    Note right of GCS: Open file
-    GCS->>Drone:  OpenFileRO( data[0]=path, size=len(path) )
-    Drone-- >>GCS: ACK( session, size=4, data=len(file) )
-    Note right of GCS: Read file in chunks<br>(call at offset)
-    GCS->>Drone:  ReadFile(session, size, offset)
-    Drone-- >>GCS: ACK(session, size=len(buffer), data[0]=buffer)
-    Note right of GCS: Continue until NAK<br> with EOF
-    Drone-- >>GCS: NAK(session, size=1, data=EOF)
-    Note right of GCS: Close session
-    GCS->>Drone:  TerminateSession(session)
-    Drone-- >>GCS: ACK()
+    participant Client
+    participant Server
+    Note right of Client: Open file
+    Client- >>Server:  OpenFileRO( data[0]=path, size=len(path) )
+    Server-- >>Client: ACK( session, size=4, data=len(file) )
+    Note right of Client: Read file in chunks<br>(call at offset)
+    Client- >>Server:  ReadFile(session, size, offset)
+    Server-- >>Client: ACK(session, size=len(buffer), data[0]=buffer)
+    Note right of Client: Continue until NAK<br> with EOF
+    Server-- >>Client: NAK(session, size=1, data=EOF)
+    Note right of Client: Close session
+    Client- >>Server:  TerminateSession(session)
+    Server-- >>Client: ACK()
 -->
 
 The sequence of operations is:
@@ -272,21 +272,21 @@ A timeout is not set for `TerminateSession` (the server may ignore failure of th
 
 The sequence of operations for uploading a file to the drone, assuming there are no timeouts and all operations/requests succeed, is shown below.
 
-[![Mermaid Sequence: Uploading a file](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgTm90ZSByaWdodCBvZiBHQ1M6IENyZWF0ZSBmaWxlIG9uIERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBDcmVhdGVGaWxlKCBkYXRhWzBdPXBhdGgsIHNpemU9bGVuKHBhdGgpIClcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSyggc2Vzc2lvbiAsIHNpemU9MCApXG4gICAgTm90ZSByaWdodCBvZiBHQ1M6IFdyaXRlIGRhdGEgaW4gY2h1bmtzPGJyPnVudGlsIGNvbXBsZXRlXG4gICAgR0NTLT4-RHJvbmU6ICBXcml0ZUZpbGUoc2Vzc2lvbiwgc2l6ZT1sZW4oYnVmZmVyKSwgb2Zmc2V0LCBkYXRhPWJ1ZmZlcilcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSyggc2Vzc2lvbiwgc2l6ZT0wIClcbiAgICBOb3RlIHJpZ2h0IG9mIEdDUzogQ2xvc2Ugc2Vzc2lvblxuICAgIEdDUy0-PkRyb25lOiAgVGVybWluYXRlU2Vzc2lvbihzZXNzaW9uKVxuICAgIERyb25lLS0-PkdDUzogQUNLKCkiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgTm90ZSByaWdodCBvZiBHQ1M6IENyZWF0ZSBmaWxlIG9uIERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBDcmVhdGVGaWxlKCBkYXRhWzBdPXBhdGgsIHNpemU9bGVuKHBhdGgpIClcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSyggc2Vzc2lvbiAsIHNpemU9MCApXG4gICAgTm90ZSByaWdodCBvZiBHQ1M6IFdyaXRlIGRhdGEgaW4gY2h1bmtzPGJyPnVudGlsIGNvbXBsZXRlXG4gICAgR0NTLT4-RHJvbmU6ICBXcml0ZUZpbGUoc2Vzc2lvbiwgc2l6ZT1sZW4oYnVmZmVyKSwgb2Zmc2V0LCBkYXRhPWJ1ZmZlcilcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSyggc2Vzc2lvbiwgc2l6ZT0wIClcbiAgICBOb3RlIHJpZ2h0IG9mIEdDUzogQ2xvc2Ugc2Vzc2lvblxuICAgIEdDUy0-PkRyb25lOiAgVGVybWluYXRlU2Vzc2lvbihzZXNzaW9uKVxuICAgIERyb25lLS0-PkdDUzogQUNLKCkiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)
+[![Mermaid Sequence: Uploading a file](https://mermaid.ink/img/pako:eNqNksFqwzAQRH9l0SkGB3J2m0Bx0kuhlxR6qHtQ7FW8VJZcaVVoQ_69SiRDoU2JTtbwZmfW6CBa26GohMf3gKbFNcm9k8NNYyCeUTqmlkZpGGpNaPi3vkX3gS7pj5YRHO17Bquyo4LaoYy6Io1gDaydNZj4RMxXqzSkgszeR3QGnWT5snhdjpL7Ejx94VKjmZ2uBRRpQjLO44gp7a5-mIFH7ylmZdtiwv8u-Owoyqc4IANtH8ybv925VTBMGlo7jBr5YuWz-9w4p_7ougtKoSvKmKY8cnkOWWb1mg2uW6DW1uNkudTzCd1AJv7dbeKmuv_2KEQphmiU1MVXcjihjeAeB2xEFT87VDJobkRjjhENY1wQNx2xdaJSUnsshQxst5-mFRW7gBOUX1qmjt-lo9qT)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNqNksFqwzAQRH9l0SkGB3J2m0Bx0kuhlxR6qHtQ7FW8VJZcaVVoQ_69SiRDoU2JTtbwZmfW6CBa26GohMf3gKbFNcm9k8NNYyCeUTqmlkZpGGpNaPi3vkX3gS7pj5YRHO17Bquyo4LaoYy6Io1gDaydNZj4RMxXqzSkgszeR3QGnWT5snhdjpL7Ejx94VKjmZ2uBRRpQjLO44gp7a5-mIFH7ylmZdtiwv8u-Owoyqc4IANtH8ybv925VTBMGlo7jBr5YuWz-9w4p_7ougtKoSvKmKY8cnkOWWb1mg2uW6DW1uNkudTzCd1AJv7dbeKmuv_2KEQphmiU1MVXcjihjeAeB2xEFT87VDJobkRjjhENY1wQNx2xdaJSUnsshQxst5-mFRW7gBOUX1qmjt-lo9qT)
 
 <!-- Original Sequence
 sequenceDiagram;
-    participant GCS
-    participant Drone
-    Note right of GCS: Create file on Drone
-    GCS->>Drone:  CreateFile( data[0]=path, size=len(path) )
-    Drone-- >>GCS: ACK( session , size=0 )
-    Note right of GCS: Write data in chunks<br>until complete
-    GCS->>Drone:  WriteFile(session, size=len(buffer), offset, data=buffer)
-    Drone-- >>GCS: ACK( session, size=0 )
-    Note right of GCS: Close session
-    GCS->>Drone:  TerminateSession(session)
-    Drone-- >>GCS: ACK()
+    participant Client
+    participant Server
+    Note right of Client: Create file on Drone
+    Client- >>Server:  CreateFile( data[0]=path, size=len(path) )
+    Server-- >>Client: ACK( session , size=0 )
+    Note right of Client: Write data in chunks<br>until complete
+    Client- >>Server:  WriteFile(session, size=len(buffer), offset, data=buffer)
+    Server-- >>Client: ACK( session, size=0 )
+    Note right of Client: Close session
+    Client- >>Server:  TerminateSession(session)
+    Server-- >>Client: ACK()
 -->
 
 The sequence of operations is:
@@ -326,21 +326,20 @@ A timeout is not set for `TerminateSession` (the server may ignore failure of th
 
 The sequence of operations for removing a file is shown below (assuming there are no timeouts and all operations/requests succeed).
 
-[![Mermaid Sequence: Removing a file](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBSZW1vdmVGaWxlKCBkYXRhWzBdPXBhdGgsIHNpemU9bGVuKHBhdGgpIClcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSyhzaXplPTApIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBSZW1vdmVGaWxlKCBkYXRhWzBdPXBhdGgsIHNpemU9bGVuKHBhdGgpIClcbiAgICBEcm9uZS0tPj5HQ1M6IEFDSyhzaXplPTApIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
-
+[![Mermaid Sequence: Removing a file](https://mermaid.ink/img/pako:eNplj81uAjEMhF8l8mlXWiTOQSAhfi69wZH0YG2GEinJbrMOEkW8e0MDp_pkj74Z23fqBwvSNOE7I_bYOv5KHBYmqlIjJ3G9GzmK2niHKP_1I9IVqeqVma1WVdRKHRCGK_bOo1GWhU_zz-XIcunU5H6w9IjNc2xVWxOqcVYiapZW681H88fOW-ooIAV2tlx8fxoMyQUBhnRpLc6cvRgy8VHQPJaF2FknQyJ9Zj-hI84yHG-xJy0p4w29vn5Rj18U3l39)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNplj81uAjEMhF8l8mlXWiTOQSAhfi69wZH0YG2GEinJbrMOEkW8e0MDp_pkj74Z23fqBwvSNOE7I_bYOv5KHBYmqlIjJ3G9GzmK2niHKP_1I9IVqeqVma1WVdRKHRCGK_bOo1GWhU_zz-XIcunU5H6w9IjNc2xVWxOqcVYiapZW681H88fOW-ooIAV2tlx8fxoMyQUBhnRpLc6cvRgy8VHQPJaF2FknQyJ9Zj-hI84yHG-xJy0p4w29vn5Rj18U3l39)
 
 <!-- Original Sequence
 sequenceDiagram;
-    participant GCS
-    participant Drone
-    GCS->>Drone:  RemoveFile( data[0]=path, size=len(path) )
-    Drone-- >>GCS: ACK(size=0)
+    participant Client
+    participant Server
+    Client- >>Server:  RemoveFile( data[0]=path, size=len(path) )
+    Server-- >>Client: ACK(size=0)
 -->
 
 The sequence of operations is:
-1. GCS sends [RemoveFile](#RemoveFile) command specifying the full path of the file to be deleted.
+1. GCS (Client) sends [RemoveFile](#RemoveFile) command specifying the full path of the file to be deleted.
    - The payload must specify: `data[0]`= file path string, `size`=length of file path string.
-1. Drone attempts to delete file, and responds to the message with either:
+1. Drone (Server) attempts to delete file, and responds to the message with either:
    - ACK on success, containing payload `size`=0 (i.e. no data).
    - NAK on failure, with [error information](#error_codes).
    - The drone must clean up any resources associated with the request after sending the response.
@@ -355,20 +354,20 @@ The sequence of operations for truncating a file is shown below (assuming there 
 > **Note** `TruncateFile` handling is implemented in PX4 but not in *QGroundControl*. 
   GCS behaviour is therefore not fully defined/tested.
 
-[![Mermaid Sequence: Truncate file](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBUcnVuY2F0ZUZpbGUgPGJyPiggZGF0YVswXT1wYXRoLCBzaXplPWxlbihwYXRoKSwgb2Zmc2V0PW9mZnNldCB0byB0cnVuY2F0ZSApXG4gICAgRHJvbmUtLT4-R0NTOiBBQ0soc2l6ZT0wKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBUcnVuY2F0ZUZpbGUgPGJyPiggZGF0YVswXT1wYXRoLCBzaXplPWxlbihwYXRoKSwgb2Zmc2V0PW9mZnNldCB0byB0cnVuY2F0ZSApXG4gICAgRHJvbmUtLT4-R0NTOiBBQ0soc2l6ZT0wKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
+[![Mermaid Sequence: Truncate file](https://mermaid.ink/img/pako:eNplUMFOwzAM_RXLp1bqpJ0DrYQGXHYcN7KDSVwWKU261EFi0_6djJQTvth-en7P9hVNtIwKFz5nDoafHX0mmh50gBIzJXHGzRQEdt5xkP_4gdMXp4pXzmYYKqgA3lIOhoRfnWd4_EhDA5aE3rfHfiY5dbC4C_eeQ3Nv2w7iOC4sfU0gEWRVgLZ6VOlNMaluCp52--ZXZttihxOniZwtN13vAxrlxBNrVKW0PFL2olGHW6HmuezCL9ZJTKhG8gt3SFni4TsYVMWZ_0jrX1bW7Qf-K2pj)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNplUMFOwzAM_RXLp1bqpJ0DrYQGXHYcN7KDSVwWKU261EFi0_6djJQTvth-en7P9hVNtIwKFz5nDoafHX0mmh50gBIzJXHGzRQEdt5xkP_4gdMXp4pXzmYYKqgA3lIOhoRfnWd4_EhDA5aE3rfHfiY5dbC4C_eeQ3Nv2w7iOC4sfU0gEWRVgLZ6VOlNMaluCp52--ZXZttihxOniZwtN13vAxrlxBNrVKW0PFL2olGHW6HmuezCL9ZJTKhG8gt3SFni4TsYVMWZ_0jrX1bW7Qf-K2pj)
 
 <!-- Original sequnce
 sequenceDiagram;
-    participant GCS
-    participant Drone
-    GCS->>Drone:  TruncateFile ( data[0]=path, size=len(path), offset=offset to truncate )
-    Drone-- >>GCS: ACK(size=0)
+    participant Client
+    participant Server
+    Client- >>Server:  TruncateFile <br>( data[0]=path, size=len(path), offset=offset to truncate )
+    Server-- >>Client: ACK(size=0)
 -->
 
 The sequence of operations is:
-1. GCS sends [TruncateFile](#TruncateFile) command specifying file to truncate and the offset for truncation. 
+1. GCS (Client) sends [TruncateFile](#TruncateFile) command specifying file to truncate and the offset for truncation. 
    - The payload must specify: `data[0]`= file path string, `size` = length of file path string, `offset` = truncation point in file (amount of data to keep).
-1. Drone attempts to truncate file, and responds to the message with either:
+1. Drone (Server) attempts to truncate file, and responds to the message with either:
    - ACK on success, containing payload `size`=0 (i.e. no data). 
      - The request should succeed if the offset is the same as the file size, and may be attempted if the offset is zero (i.e. truncate whole file).
    - NAK on failure, with [error information](#error_codes). 
@@ -382,30 +381,30 @@ The GSC should create a timeout after the `TruncateFile` command is sent and res
 
 The sequence of operations for getting a directory listing is shown below (assuming there are no timeouts and all operations/requests succeed).
 
-[![Mermaid Sequence: List Directory](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgTm90ZSBvdmVyIEdDUyxEcm9uZTogUmVxdWVzdCBlbnRyaWVzIGZyb20gaW5kZXggKG9mZnNldCkgMC48YnI-T25lIG9yIG1vcmUgZW50cmllcyByZXR1cm5lZCBpbiBBQ0suXG4gICAgR0NTLT4-RHJvbmU6IExpc3REaXJlY3RvcnkoIGRhdGFbMF09cGF0aCwgc2l6ZT1sZW4ocGF0aCksIG9mZnNldD0wIClcbiAgICBEcm9uZS0-PkdDUzogQUNLKHNpemUsIGRhdGE9ZW50cmllc19hdF9vZmZzZXRfMClcbiAgICBOb3RlIG92ZXIgR0NTLERyb25lOiBSZXBlYXQgcmVxdWVzdCBpbiBjeWNsZSB0byBnZXQgYWxsPGJyPmVudHJpZXMgKGVhY2ggdGltZSBzZXQgb2Zmc2V0IHRvPGJyPmVudHJ5IGluZGV4IGp1c3QgYWZ0ZXIgbGFzdCBvbmU8YnI-cmVjZWl2ZWQpLlxuICAgIEdDUy0-PkRyb25lOiBMaXN0RGlyZWN0b3J5KCBkYXRhWzBdPXBhdGgsIHNpemU9bGVuKHBhdGgpLCBvZmZzZXQ9Li4uKVxuICAgIERyb25lLT4-R0NTOiBBQ0soc2l6ZSwgZGF0YT1lbnRyaWVzX2F0X29mZnNldClcbiAgICBOb3RlIG92ZXIgR0NTLERyb25lOiBEcm9uZSBOQUNLIHdpdGggRU9GIHdoZW4gYWxsPGJyPmVudHJpZXMgcmV0dXJuZWQ8YnI-KGUuZy4gcmVxdWVzdCB3aXRoOjxicj5vZmZzZXQgPj0gbnVtYmVyIG9mIGVudHJpZXMpLlxuICAgIEdDUy0-PkRyb25lOiAgTGlzdERpcmVjdG9yeSggZGF0YVswXT1wYXRoLCBzaXplPWxlbihwYXRoKSwgb2Zmc2V0PXRvb19iaWcgKVxuICAgIERyb25lLT4-R0NTOiBOQUNLKHNpemU9MSwgZGF0YVswXT1FT0YpIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgTm90ZSBvdmVyIEdDUyxEcm9uZTogUmVxdWVzdCBlbnRyaWVzIGZyb20gaW5kZXggKG9mZnNldCkgMC48YnI-T25lIG9yIG1vcmUgZW50cmllcyByZXR1cm5lZCBpbiBBQ0suXG4gICAgR0NTLT4-RHJvbmU6IExpc3REaXJlY3RvcnkoIGRhdGFbMF09cGF0aCwgc2l6ZT1sZW4ocGF0aCksIG9mZnNldD0wIClcbiAgICBEcm9uZS0-PkdDUzogQUNLKHNpemUsIGRhdGE9ZW50cmllc19hdF9vZmZzZXRfMClcbiAgICBOb3RlIG92ZXIgR0NTLERyb25lOiBSZXBlYXQgcmVxdWVzdCBpbiBjeWNsZSB0byBnZXQgYWxsPGJyPmVudHJpZXMgKGVhY2ggdGltZSBzZXQgb2Zmc2V0IHRvPGJyPmVudHJ5IGluZGV4IGp1c3QgYWZ0ZXIgbGFzdCBvbmU8YnI-cmVjZWl2ZWQpLlxuICAgIEdDUy0-PkRyb25lOiBMaXN0RGlyZWN0b3J5KCBkYXRhWzBdPXBhdGgsIHNpemU9bGVuKHBhdGgpLCBvZmZzZXQ9Li4uKVxuICAgIERyb25lLT4-R0NTOiBBQ0soc2l6ZSwgZGF0YT1lbnRyaWVzX2F0X29mZnNldClcbiAgICBOb3RlIG92ZXIgR0NTLERyb25lOiBEcm9uZSBOQUNLIHdpdGggRU9GIHdoZW4gYWxsPGJyPmVudHJpZXMgcmV0dXJuZWQ8YnI-KGUuZy4gcmVxdWVzdCB3aXRoOjxicj5vZmZzZXQgPj0gbnVtYmVyIG9mIGVudHJpZXMpLlxuICAgIEdDUy0-PkRyb25lOiAgTGlzdERpcmVjdG9yeSggZGF0YVswXT1wYXRoLCBzaXplPWxlbihwYXRoKSwgb2Zmc2V0PXRvb19iaWcgKVxuICAgIERyb25lLT4-R0NTOiBOQUNLKHNpemU9MSwgZGF0YVswXT1FT0YpIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
+[![Mermaid Sequence: List Directory](https://mermaid.ink/img/pako:eNqtU8FunDAU_JUnn0CiaHOlZaUqm1xabaTmWKqVF4bFFdjUPJJuo_x7n2vYQ6soUlRO9vO8mTeD_aRq10AVasKPGbbGzuiT18P7ypJ8o_ZsajNqy3TdG1j-t34P_wAf63vHICfbBZ3Fw4K-BPqJSWreYKLWu4GMbfCTEte2EzilTf7h6Ld3Vhg8Dc7jgvbg2Vs00kEfrz_lUSxKvNtuV5HPZuKd8ajZ-XNCjWb9dfOtHDV3GU3mF8oeNgnbNKOoWm4ojWyRRNgibRGEktCU_SEql1kOmg-x9bBJXzU9QrNMH73L8PW57kHs6AQm3ffB8Goyga47YjOAhH2ZT7Ar5rzk9X0WLt2y6PVals4iQMQ2zAOa9H-mk-f5W-N5LZydl8FpLzT0aLijm7tbeuxg_45l_fehliA_5Zc8Q1sRyktU25LsPBxFyrXr1XkxjTfFwc4djub04pXZr6GUV9mFUYylKlMD_KBNI0_tKXRXijsMqFQhywatnnuuVGWfBTqP0oubxshoqmh1PyFTemZ3f7a1KtjPWEHLc11Qz78Bv1VO8A)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNqtU8FunDAU_JUnn0CiaHOlZaUqm1xabaTmWKqVF4bFFdjUPJJuo_x7n2vYQ6soUlRO9vO8mTeD_aRq10AVasKPGbbGzuiT18P7ypJ8o_ZsajNqy3TdG1j-t34P_wAf63vHICfbBZ3Fw4K-BPqJSWreYKLWu4GMbfCTEte2EzilTf7h6Ld3Vhg8Dc7jgvbg2Vs00kEfrz_lUSxKvNtuV5HPZuKd8ajZ-XNCjWb9dfOtHDV3GU3mF8oeNgnbNKOoWm4ojWyRRNgibRGEktCU_SEql1kOmg-x9bBJXzU9QrNMH73L8PW57kHs6AQm3ffB8Goyga47YjOAhH2ZT7Ar5rzk9X0WLt2y6PVals4iQMQ2zAOa9H-mk-f5W-N5LZydl8FpLzT0aLijm7tbeuxg_45l_fehliA_5Zc8Q1sRyktU25LsPBxFyrXr1XkxjTfFwc4djub04pXZr6GUV9mFUYylKlMD_KBNI0_tKXRXijsMqFQhywatnnuuVGWfBTqP0oubxshoqmh1PyFTemZ3f7a1KtjPWEHLc11Qz78Bv1VO8A)
 
 <!-- original sequence
 sequenceDiagram;
-    participant GCS
-    participant Drone
-    Note over GCS,Drone: Request entries from index (offset) 0.<br>One or more entries returned in ACK.
-    GCS->>Drone: ListDirectory( data[0]=path, size=len(path), offset=0 )
-    Drone->>GCS: ACK(size, data=entries_at_offset_0)
-    Note over GCS,Drone: Repeat request in cycle to get all<br>entries (each time set offset to<br>entry index just after last one<br>received).
-    GCS->>Drone: ListDirectory( data[0]=path, size=len(path), offset=...)
-    Drone->>GCS: ACK(size, data=entries_at_offset)
-    Note over GCS,Drone: Drone NACK with EOF when all<br>entries returned<br>(e.g. request with:<br>offset >= number of entries).
-    GCS->>Drone:  ListDirectory( data[0]=path, size=len(path), offset=too_big )
-    Drone->>GCS: NACK(size=1, data[0]=EOF)
+    participant Client
+    participant Server
+    Note over Client,Server: Request entries from index (offset) 0.<br>One or more entries returned in ACK.
+    Client- >>Server: ListDirectory( data[0]=path, size=len(path), offset=0 )
+    Server- >>Client: ACK(size, data=entries_at_offset_0)
+    Note over Client,Server: Repeat request in cycle to get all<br>entries (each time set offset to<br>entry index just after last one<br>received).
+    Client- >>Server: ListDirectory( data[0]=path, size=len(path), offset=...)
+    Server- >>Client: ACK(size, data=entries_at_offset)
+    Note over Client,Server: Drone NACK with EOF when all<br>entries returned<br>(e.g. request with:<br>offset >= number of entries).
+    Client- >>Server:  ListDirectory( data[0]=path, size=len(path), offset=too_big )
+    Server- >>Client: NACK(size=1, data[0]=EOF)
 -->
 
 The sequence of operations is:
-1. GCS sends [ListDirectory](#ListDirectory) command specifying a directory path and the **index** of an entry.
+1. GCS (Client) sends [ListDirectory](#ListDirectory) command specifying a directory path and the **index** of an entry.
    - The [payload](#payload) must specify:
      - `data[0]` = file path
      - `size` = length of path string
      - `offset` = The index of the first entry to get (0 for first entry, 1 for second, etc.).
-1. Drone responds with an ACK containing **one or more entries** (the first entry is the one specified in request `offset` field).
+1. Drone (Server) responds with an ACK containing **one or more entries** (the first entry is the one specified in request `offset` field).
    - The payload must specify:
      - `data[0]` = Information for one or more (sequential) entries, starting at the requested entry index (`offset`).
        Each entry is separated with a null terminator (`\0`), and has the following format (where `type` is one of the letters **F**(ile), **D**(irectory), **S**(skip))
@@ -431,20 +430,20 @@ Generally errors are unrecoverable, and the drone must clean up all resources (i
 The sequence of operations for creating a directory is shown below (assuming there are no timeouts and all operations/requests succeed). 
 Note that this operation will fail if the directory is not empty.
 
-[![Mermaid Sequence: Create Directory](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBDcmVhdGVEaXJlY3RvcnkoIGRhdGFbMF09cGF0aCwgc2l6ZT1sZW4ocGF0aCkgKVxuICAgIERyb25lLS0-PkdDUzogQUNLKHNpemU9MCkiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBDcmVhdGVEaXJlY3RvcnkoIGRhdGFbMF09cGF0aCwgc2l6ZT1sZW4ocGF0aCkgKVxuICAgIERyb25lLS0-PkdDUzogQUNLKHNpemU9MCkiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)
+[![Mermaid Sequence: Create Directory](https://mermaid.ink/img/pako:eNplj0FvwjAMhf9K5FMrFYlzJpCmbieOHJcdrOQxIrVp5zqTGOK_Ewic8Ml--vyefSY_BZClBb8ZyeMj8o_w-OaSKTWzaPRx5qSmHyKSvup7yB-k6pVZbbdVtKYXsBZTgddJTo0JrPy1_t7MrMfOLPEfmwGpuY2taatLXV4Vm-pnzXu_a-7suqWORsjIMZSrz7cFR3rECEe2tAEHzoM6culS0DyXQHyGWNLJHnhY0BFnnfan5MmqZDyhx-cP6nIFA0df-A)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNplj0FvwjAMhf9K5FMrFYlzJpCmbieOHJcdrOQxIrVp5zqTGOK_Ewic8Ml--vyefSY_BZClBb8ZyeMj8o_w-OaSKTWzaPRx5qSmHyKSvup7yB-k6pVZbbdVtKYXsBZTgddJTo0JrPy1_t7MrMfOLPEfmwGpuY2taatLXV4Vm-pnzXu_a-7suqWORsjIMZSrz7cFR3rECEe2tAEHzoM6culS0DyXQHyGWNLJHnhY0BFnnfan5MmqZDyhx-cP6nIFA0df-A)
 
 <!--
 sequenceDiagram;
-    participant GCS
-    participant Drone
-    GCS->>Drone:  CreateDirectory( data[0]=path, size=len(path) )
-    Drone-- >>GCS: ACK(size=0)
+    participant Client
+    participant Server
+    Client- >>Server: CreateDirectory( data[0]=path, size=len(path) )
+    Server-- >>Client: ACK(size=0)
 -->
 
 The sequence of operations is:
-1. GCS sends [CreateDirectory](#CreateDirectory) command specifying the full path of the directory to be created.
+1. GCS (Client) sends [CreateDirectory](#CreateDirectory) command specifying the full path of the directory to be created.
    - The payload must specify: `data[0]`= directory path string, `size`=length of directory path string.
-1. Drone attempts to create directory, and responds to the message with either:
+1. Drone (Server) attempts to create directory, and responds to the message with either:
    - ACK on success, containing payload `size`=0 (i.e. no data).
    - NAK on failure, with [error information](#error_codes).
    - The drone must clean up any resources associated with the request after sending the response.
@@ -460,15 +459,14 @@ The GSC should not create timeouts or handle the NAK case (other than to report 
 The sequence of operations for removing a directory is shown below (assuming there are no timeouts and all operations/requests succeed). 
 Note that this operation will fail if the directory is not empty.
 
-[![Mermaid Sequence: Remove directory](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBSZW1vdmVEaXJlY3RvcnkoIGRhdGFbMF09cGF0aCwgc2l6ZT1sZW4ocGF0aCkgKVxuICAgIERyb25lLS0-PkdDUzogQUNLKHNpemU9MCkiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtO1xuICAgIHBhcnRpY2lwYW50IEdDU1xuICAgIHBhcnRpY2lwYW50IERyb25lXG4gICAgR0NTLT4-RHJvbmU6ICBSZW1vdmVEaXJlY3RvcnkoIGRhdGFbMF09cGF0aCwgc2l6ZT1sZW4ocGF0aCkgKVxuICAgIERyb25lLS0-PkdDUzogQUNLKHNpemU9MCkiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)
-
+[![Mermaid Sequence: Remove directory](https://mermaid.ink/img/pako:eNpljzFvAjEMhf9K5OlOOiTmVCAh2omNG5sOVvKASJfckXOQKOK_NzQw4cl--vyefSM7OpCmGeeMaPHp-Zg4fJioSk2cxFs_cRS1HTyivOs90gWp6pVZrNdV1ErtEcZLcU2wMqZroxwLfy9_VhPLqVOz_8VqQGweY6vaalO3F8WnGmq12e6af3bZUkcBKbB35ezbY8GQnBBgSJfW4cB5EEMm3guapxKIL-dLOukDDzM64ixjf42WtKSMF_R8_Und_wBOYWAy)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNpljzFvAjEMhf9K5OlOOiTmVCAh2omNG5sOVvKASJfckXOQKOK_NzQw4cl--vyefSM7OpCmGeeMaPHp-Zg4fJioSk2cxFs_cRS1HTyivOs90gWp6pVZrNdV1ErtEcZLcU2wMqZroxwLfy9_VhPLqVOz_8VqQGweY6vaalO3F8WnGmq12e6af3bZUkcBKbB35ezbY8GQnBBgSJfW4cB5EEMm3guapxKIL-dLOukDDzM64ixjf42WtKSMF_R8_Und_wBOYWAy)
 
 <!-- Original Diagram
 sequenceDiagram;
-    participant GCS
-    participant Drone
-    GCS->>Drone:  RemoveDirectory( data[0]=path, size=len(path) )
-    Drone-- >>GCS: ACK(size=0)
+    participant Client
+    participant Server
+    Client- >>Server:  RemoveDirectory( data[0]=path, size=len(path) )
+    Server-- >>Client: ACK(size=0)
 -->
 
 The sequence of operations is:
@@ -480,7 +478,6 @@ The sequence of operations is:
    - The drone must clean up any resources associated with the request after sending the response.
 
 The GSC should create a timeout after the `RemoveDirectory` command is sent and resend the message as needed (and [described above](#timeouts)).
-
 
 
 ## Implementations
