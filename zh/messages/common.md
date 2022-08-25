@@ -22,7 +22,7 @@ td {
 }
 </style>
 
-xxx
+Test link to [FIRMWARE_VERSION_TYPE_RC](#FIRMWARE_VERSION_TYPE_RC)
 
 
 
@@ -66,7 +66,17 @@ Request storage information ([STORAGE_INFORMATION](#STORAGE_INFORMATION)). Use t
 ### MAV_CMD_REQUEST_MESSAGE
 
 
-XXX
+### FIRMWARE_VERSION_TYPE
+
+[Enum] These values define the type of firmware release. These values indicate the first version or release of this type. For example the first alpha release would be 64, the second would be 65.
+
+Value | Field Name| Description
+--- | --- | ---
+<a id="FIRMWARE_VERSION_TYPE_DEV"></a>0 | `FIRMWARE_VERSION_TYPE_DEV` | development release
+<a id="FIRMWARE_VERSION_TYPE_ALPHA"></a>64 | `FIRMWARE_VERSION_TYPE_ALPHA` | alpha release
+<a id="FIRMWARE_VERSION_TYPE_BETA"></a>128 | `FIRMWARE_VERSION_TYPE_BETA` | beta release
+<a id="FIRMWARE_VERSION_TYPE_RC"></a>192 | `FIRMWARE_VERSION_TYPE_RC` | release candidate
+<a id="FIRMWARE_VERSION_TYPE_OFFICIAL"></a>255 | `FIRMWARE_VERSION_TYPE_OFFICIAL` | official stable release
 
 ### STORAGE_INFORMATION
 
