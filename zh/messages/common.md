@@ -24,7 +24,7 @@ td {
 
  
 
-{% include "_html/common.md" %}
+[common md file - included](_html/common.md ':include')
 
 
 # Minimal.xml {#minimal}
