@@ -25,7 +25,7 @@ td {
 </style>
 
 
-{% include "_html/common.html" %}
+[common html file - included](_html/common.html ':include')
 
 
 # Minimal.xml {#minimal}
@@ -34,4 +34,4 @@ The minimal set of definitions required for any MAVLink system are included from
 These are listed below.
 
 
-{% include "_html/minimal.html" %}
+[minimal html file - included](_html/minimal.html ':include')
