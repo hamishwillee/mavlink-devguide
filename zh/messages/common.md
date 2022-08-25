@@ -25,53 +25,12 @@ td {
 xxx
 
 
-  <h3 id="MAV_CMD_REQUEST_STORAGE_INFORMATION">MAV_CMD_REQUEST_STORAGE_INFORMATION (<a href="#MAV_CMD_REQUEST_STORAGE_INFORMATION">525</a>
-   )
-  </h3>
-  <p style="color:red">
-   <strong>DEPRECATED:</strong> Replaced by <a href="#MAV_CMD_REQUEST_MESSAGE">MAV_CMD_REQUEST_MESSAGE</a> (2019-08).</p>
-  <p>
-   <a href="#mav_commands">
-    [Command]
-   </a>Request storage information (<a href="#STORAGE_INFORMATION">STORAGE_INFORMATION</a>). Use the command's target_component to target a specific component's storage.</p>
-  <table class="sortable">
-   <thead>
-    <tr>
-     <th>Param (:Label)</th>
-     <th>Description</th>
-     <th>Values</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr>
-     <td>1: Storage ID</td>
-     <td>Storage ID (0 for all, 1 for first, 2 for second, etc.)</td>
-     <td>
-      <em>min:</em>0 <em>increment:</em>1</td>
-    </tr>
-    <tr>
-     <td>2: Information</td>
-     <td>0: No Action 1: Request storage information</td>
-     <td>
-      <em>min:</em>0 <em>max:</em>1 <em>increment:</em>1</td>
-    </tr>
-    <tr>
-     <td>3</td>
-     <td>Reserved (all remaining params)</td>
-     <td>
-     </td>
-    </tr>
-   </tbody>
-  </table>
-  
-Test
 
 ### MAV_CMD_REQUEST_STORAGE_INFORMATION (525)
 
-**DEPRECATED** Replaced by <a href="#MAV_CMD_REQUEST_MESSAGE">MAV_CMD_REQUEST_MESSAGE</a> (2019-08).</p>
+**DEPRECATED** Replaced by [MAV_CMD_REQUEST_MESSAGE](#MAV_CMD_REQUEST_STORAGE_INFORMATION) (2019-08).</p>
 
-Request storage information (<a href="#STORAGE_INFORMATION">STORAGE_INFORMATION</a>). Use the command's target_component to target a specific component's storage.
-   
+Request storage information ([STORAGE_INFORMATION](#STORAGE_INFORMATION)). Use the command's target_component to target a specific component's storage.
 
   <table class="sortable">
    <thead>
@@ -102,13 +61,14 @@ Request storage information (<a href="#STORAGE_INFORMATION">STORAGE_INFORMATION<
     </tr>
    </tbody>
   </table>
- 
- 
- 
+
+
 ### MAV_CMD_REQUEST_MESSAGE
 
 
 XXX
+
+### STORAGE_INFORMATION
 
 # Minimal.xml {#minimal}
 
