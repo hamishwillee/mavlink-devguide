@@ -49,16 +49,17 @@ This section shows the serialized message format of MAVLink packets (the format 
 Below is the over-the-wire format for a [MAVLink 2](../guide/mavlink_2.md) packet (the in-memory representation might differ).
 
 1. 
-![MAVLink v2 packet](../../assets/packets/packet_mavlink_v2.jpg) 
+   ![MAVLink v2 packet](../../assets/packets/packet_mavlink_v2.jpg) 
 
 2. 
-
-![MAVLink v2 packet](/assets/packet_mavlink_v2.jpg)
+   ![MAVLink v2 packet](/assets/packets/packet_mavlink_v2.jpg)
 
 3. 
+   ![MAVLink v2 packet](packet_mavlink_v2.jpg)
 
-![MAVLink v2 packet](packet_mavlink_v2.jpg)
-
+4. 
+   <img src="packet_mavlink_v2.jpg" title="MAVLink v2 packet">
+   
 
 Byte Index | C version | Content | Value | Explanation
 --- | --- | --- | --- | ---
