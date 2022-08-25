@@ -24,10 +24,11 @@ td {
 
  
 
-{% include "_html/common.html" %}
+{% include "_html/common.md" %}
+
 
 # Minimal.xml {#minimal}
 
 The minimal set of definitions required for any MAVLink system are included from [minimal.xml](minimal.md). These are listed below.
 
-{% include "_html/minimal.html" %}
+[minimal html file - included](_html/minimal.html ':include')
