@@ -24,11 +24,15 @@ td {
 
  
 
-[common md file - included](_html/common.md ':include')
+[filename](_html/common.md ':include')
+
+
+[filenamecode](_html/common.md ':include type:code')
 
 
 # Minimal.xml {#minimal}
 
 The minimal set of definitions required for any MAVLink system are included from [minimal.xml](minimal.md). These are listed below.
 
-[minimal html file - included](_html/minimal.html ':include')
+[minimal](_html/minimal.html ':include type:markdown')
+
